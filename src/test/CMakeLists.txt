@@ -6,7 +6,7 @@ add_executable(
   matrix.cpp
 )
 target_link_libraries(
-  test_matrix
+  test_matrix_MNIST
 
   qmp
 )

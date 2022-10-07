@@ -1,22 +1,22 @@
 include_directories(.)
 
-add_library(qmp
-  matrix_gadget.cpp
-  model.cpp
-  timer.cpp
-  utils.cpp
-  writer.cpp
+find_package(SEAL 4.0 REQUIRED)
+
+add_executable(
+  HE-main
+
+  he-main.cpp
 )
 
 target_link_libraries(
-  qmp
+  HE-main
 
   snark
-  cryptopp
+  SEAL::seal
 )
 
 target_include_directories(
-  qmp
+  HE-main
 
   PUBLIC
   ${DEPENDS_DIR}/libsnark

@@ -1,6 +1,7 @@
 Prerequisite:
 - libsnark
 - cryptopp
+- SEAL: HE lib
 
 And then
 - `cmake -B build`

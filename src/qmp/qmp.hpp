@@ -286,24 +286,15 @@ bool qmp_zksnark_verifier(const qmp_crs<ppT> &crs, const qmp_zksnark_proof<ppT> 
     const libff::G2_precomp<ppT> h_precomp = ppT::precompute_G2(crs.h);
     const libff::Fqk<ppT> QMP1_1 = ppT::miller_loop(proof_g_A_precomp, proof_g_B_precomp);
 
-    // std::vector<libff::Fqk<ppT>> QMP1_4_vec(aux_input.g_C_vec.size());
-    std::vector<libff::Fqk<ppT>> QMP1_4_vec(aux_input.g_C_vec.size() / 1000);
+    std::vector<libff::Fqk<ppT>> QMP1_4_vec(aux_input.g_C_vec.size());
 
-    libff::enter_block("compute aux pairing");
-    // for(auto i=0;i< aux_input.g_C_vec.size();i++){
-    // for (auto i = 0; i < aux_input.g_C_vec.size(); i++)
-    for (auto i = 0; i < aux_input.g_C_vec.size() / 1000; i++)
+    for (auto i = 0; i < aux_input.g_C_vec.size(); i++)
     {
         libff::G1_precomp<ppT> proof_g_C_vec_precomp = ppT::precompute_G1(aux_input.g_C_vec[i]);
-        // QMP1_4_vec.emplace_back( ppT::miller_loop(proof_g_C_vec_precomp,  h_precomp) );
         QMP1_4_vec[i] = (ppT::miller_loop(proof_g_C_vec_precomp, h_precomp));
     }
 
-    libff::leave_block("计算aux 双线性对");
-
-    // for(auto i=0;i<proof.g_C.size();i++){//proof.g_C.size()
-    // for (auto i = 0; i < proof.g_C.size(); i++)
-    for (auto i = 0; i < proof.g_C.size() / 1000; i++)
+    for (auto i = 0; i < proof.g_C.size(); i++)
     {
         // left
         // e(A,B)e(A,h)^[1 2 2 1]*e(g,B)^[2 1 3 2]*e(g,h)^[2 1 3 2]*[1 2 2 1]
@@ -356,4 +347,3 @@ bool qmp_zksnark_verifier(const qmp_crs<ppT> &crs, const qmp_zksnark_proof<ppT> 
 
     return result;
 }
- 

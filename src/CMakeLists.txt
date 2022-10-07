@@ -20,3 +20,4 @@ target_include_directories(
 
 add_subdirectory(qmp)
 add_subdirectory(test)
+add_subdirectory(commitment)
