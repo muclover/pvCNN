@@ -1,7 +1,7 @@
 include_directories(.)
 
 add_executable(
-  test_matrix
+  test_matrix_MNIST
 
   matrix.cpp
 )
