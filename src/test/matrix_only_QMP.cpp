@@ -44,13 +44,6 @@ int main()
     vector<FieldT> A3(N * N, 0);
     multi2(A1, A2, A3, N, N, N);
 
-    log_debug("打印矩阵 A1");
-    print_matrix<FieldT>(A1, N, N);
-    log_debug("打印矩阵 A2");
-    print_matrix<FieldT>(A2, N, N);
-    log_debug("打印矩阵 A3");
-    print_matrix<FieldT>(A3, N, N);
-
     qmp_zksnark<default_r1cs_gg_ppzksnark_pp> cs = qmp_zksnark<
         default_r1cs_gg_ppzksnark_pp>(move(A0),
                                       move(A1),

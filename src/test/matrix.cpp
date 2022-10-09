@@ -38,8 +38,6 @@ int main()
 
     ifstream ifs(input_file);
 
-    log_debug("读取输入数据");
-    //读取输入数据
     for (int i = 0; i < first_input.size(); ++i)
     {
         ifs >> x;
@@ -57,9 +55,6 @@ int main()
     }
     ifs.close();
 
-    log_debug("proof started");
-
-    log_debug("计算 input 展开的矩阵");
     int M_row = block * weight * dimension;
     int M_column = M_row;
 
@@ -100,8 +95,6 @@ int main()
     }
 
     vector<float>().swap(input);
-
-    log_debug("计算 weight 展开的矩阵");
 
     d = 0;
     Matrix<float> M_weight(M_row);
@@ -162,7 +155,6 @@ int main()
         }
     }
 
-    log_debug("计算最大最小值");
     auto bigges = max_element<float>(M_input);
     auto smalles = min_element<float>(M_input);
 
@@ -176,7 +168,6 @@ int main()
             M_first_input_int[i][j] = (round(M_input[i][j] / scale_in) + zero_point_in);
         }
     }
-    log_debug("量化weight矩阵");
     Matrix<int> M_first_kernel_int(M_row);
     for (int i = 0; i < M_first_kernel_int.size(); ++i)
     {
@@ -200,7 +191,6 @@ int main()
         }
     }
 
-    log_debug("矩阵相乘");
     Matrix<float> M_mul = M_weight * M_input;
     Matrix<int> M_first_result_int(M_row);
     for (int i = 0; i < M_first_result_int.size(); ++i)
@@ -224,9 +214,7 @@ int main()
         }
     }
     float M_scale = scale_kernel * scale_in / scale_result;
-    //量化后求解，产生中间量化矩阵
     Matrix<int> M_tempA(M_row);
-    //初始化
     for (int i = 0; i < M_tempA.size(); i++)
     {
         M_tempA[i].resize(M_row);
@@ -236,7 +224,6 @@ int main()
         }
     }
     Matrix<int> M_tempB(M_row);
-    //初始化
     for (int i = 0; i < M_tempB.size(); i++)
     {
         M_tempB[i].resize(M_row);
@@ -254,8 +241,6 @@ int main()
             M_tempB[i][j] = M_first_kernel_int[i][j] - zero_point_kernel;
         }
     }
-
-    cout << "矩阵相乘：" << endl;
 
     Matrix<int> M_result_temp = M_tempB * M_tempA;
 
