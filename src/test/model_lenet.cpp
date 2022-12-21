@@ -1,17 +1,17 @@
-#include <iostream>
-#include <string>
-#include <sstream>
-#include <vector>
 #include <fstream>
+#include <iostream>
+#include <sstream>
+#include <string>
+#include <vector>
 
 #include "libff/algebra/fields/field_utils.hpp"
-#include <libsnark/zk_proof_systems/ppzksnark/r1cs_gg_ppzksnark/r1cs_gg_ppzksnark.hpp>
 #include <libsnark/common/default_types/r1cs_gg_ppzksnark_pp.hpp>
+#include <libsnark/zk_proof_systems/ppzksnark/r1cs_gg_ppzksnark/r1cs_gg_ppzksnark.hpp>
 
-#include "../qmp/utils.hpp"
 #include "../qmp/matrix_gadget.hpp"
 #include "../qmp/qmp.hpp"
 #include "../qmp/timer.hpp"
+#include "../qmp/utils.hpp"
 #include "../qmp/writer.hpp"
 
 using namespace std;
@@ -25,14 +25,10 @@ constexpr int number_of_filter = 1;
 template <typename T>
 void print_kernel(const vector<vector<vector<vector<T>>>> &kernel, int c_out, int c_in, int k)
 {
-    for (int i = 0; i < c_in; ++i)
-    {
-        for (int j = 0; j < c_out; ++j)
-        {
-            for (int p = 0; p < k; ++p)
-            {
-                for (int q = 0; q < k; ++q)
-                {
+    for (int i = 0; i < c_in; ++i) {
+        for (int j = 0; j < c_out; ++j) {
+            for (int p = 0; p < k; ++p) {
+                for (int q = 0; q < k; ++q) {
                     cout << kernel[i][j][p][q] << " ";
                 }
                 cout << endl;
@@ -45,12 +41,9 @@ void print_kernel(const vector<vector<vector<vector<T>>>> &kernel, int c_out, in
 }
 void print_input(vector<vector<vector<int>>> input, int c_in, int n)
 {
-    for (int i = 0; i < c_in; ++i)
-    {
-        for (int p = 0; p < n; ++p)
-        {
-            for (int q = 0; q < n; ++q)
-            {
+    for (int i = 0; i < c_in; ++i) {
+        for (int p = 0; p < n; ++p) {
+            for (int q = 0; q < n; ++q) {
                 cout << input[i][p][q] << " ";
             }
             cout << "\n";
@@ -65,16 +58,12 @@ vector<vector<int>> quan_scale(vector<vector<double>> input)
     // max
     double max = input[0][0];
     double min = input[0][0];
-    for (int i = 0; i < input.size(); ++i)
-    {
-        for (int j = 0; j < input[0].size(); ++j)
-        {
-            if (input[i][j] > max)
-            {
+    for (int i = 0; i < input.size(); ++i) {
+        for (int j = 0; j < input[0].size(); ++j) {
+            if (input[i][j] > max) {
                 max = input[i][j];
             }
-            if (input[i][j] < min)
-            {
+            if (input[i][j] < min) {
                 min = input[i][j];
             }
         }
@@ -84,10 +73,8 @@ vector<vector<int>> quan_scale(vector<vector<double>> input)
     auto zero_point = (255.0 - max / scale);
     vector<vector<int>> res;
     res.reserve(input.size() * input.size());
-    for (int i = 0; i < input.size(); ++i)
-    {
-        for (int j = 0; j < input[0].size(); ++j)
-        {
+    for (int i = 0; i < input.size(); ++i) {
+        for (int j = 0; j < input[0].size(); ++j) {
             res.emplace_back(round(input[i][j] / scale + zero_point));
         }
     }
@@ -110,22 +97,18 @@ vector<vector<vector<int>>> read_input_from_file(const string &file)
     ifstream ifs;
     ifs.open(file.c_str());
 
-    if (!ifs.is_open())
-    {
-        log_debug("can't open file");
+    if (!ifs.is_open()) {
+        throw "can't open file";
     }
 
     string line;
     getline(ifs, line); // 1 line : 3*32*32
     // while (getline(ifs, line))
     // {
-    for (int i = 0; i < c_in; ++i)
-    {
+    for (int i = 0; i < c_in; ++i) {
         stringstream ss(line);
-        for (int p = 0; p < n; ++p)
-        {
-            for (int q = 0; q < n; ++q)
-            {
+        for (int p = 0; p < n; ++p) {
+            for (int q = 0; q < n; ++q) {
                 ss >> input[i][p][q];
                 string s;
                 getline(ss, s, ',');
@@ -142,9 +125,8 @@ vector<vector<vector<vector<vector<int>>>>> read_weight_from_file(const string &
 {
     ifstream ifs;
     ifs.open(file.c_str());
-    if (!ifs.is_open())
-    {
-        log_debug("can't open file");
+    if (!ifs.is_open()) {
+        throw "can't open file";
     }
 
     string line;
@@ -164,16 +146,11 @@ vector<vector<vector<vector<vector<int>>>>> read_weight_from_file(const string &
 
     stringstream ss(line);
 
-    for (int c = 0; c < 3; ++c)
-    {
-        for (int i = 0; i < c_in; ++i)
-        {
-            for (int j = 0; j < c_out; ++j)
-            {
-                for (int p = 0; p < k; ++p)
-                {
-                    for (int q = 0; q < k; ++q)
-                    {
+    for (int c = 0; c < 3; ++c) {
+        for (int i = 0; i < c_in; ++i) {
+            for (int j = 0; j < c_out; ++j) {
+                for (int p = 0; p < k; ++p) {
+                    for (int q = 0; q < k; ++q) {
                         ss >> kernel[c][i][j][p][q];
                         string s;
                         getline(ss, s, ',');
@@ -196,24 +173,19 @@ void process_input(const vector<vector<vector<int>>> &input, int c_in, int n, in
     int col = 0;
     c_in = number_of_input;
 
-    for (int i = 0; i < c_in; ++i)
-    {
+    for (int i = 0; i < c_in; ++i) {
         vector<int> tmp;
         int index = 0;
-        while (index < block)
-        {
-            for (int p = 0; p < n; ++p)
-            {
-                for (int q = 0; q < k; ++q)
-                {
+        while (index < block) {
+            for (int p = 0; p < n; ++p) {
+                for (int q = 0; q < k; ++q) {
                     tmp.push_back(input[i][index + q][p]);
                 }
             }
             index++;
         }
         // print_vector(tmp);
-        for (int t = 0; t < tmp.size(); ++t)
-        {
+        for (int t = 0; t < tmp.size(); ++t) {
             Mi[t][i] = tmp[t];
         }
     }
@@ -237,28 +209,21 @@ void process_kernel(const vector<vector<vector<vector<int>>>> &kernel, int c_out
     // c_out * k * k
     // each proof : c_out*k*k conv 1*n*n
     // output:
-    for (int i = 0; i < c_channel; ++i)
-    {
-        for (int j = 0; j < c_out; ++j)
-        {
+    for (int i = 0; i < c_channel; ++i) {
+        for (int j = 0; j < c_out; ++j) {
             // vector<vector<int>> tmp;
             // tmp.insert(tmp.end(), kernel[i][j].begin(), kernel[i][j].end());
             vector<int> tmp;
-            for (int p = 0; p < k; ++p)
-            {
-                for (int q = 0; q < k; ++q)
-                {
+            for (int p = 0; p < k; ++p) {
+                for (int q = 0; q < k; ++q) {
                     tmp.push_back(kernel[i][j][q][p]);
                 }
             }
             // print_vector(tmp);
 
-            for (int a = 0; a < block; ++a)
-            {
-                for (int b = 0; b < block; ++b)
-                {
-                    for (int col = 0; col < k * k; ++col)
-                    {
+            for (int a = 0; a < block; ++a) {
+                for (int b = 0; b < block; ++b) {
+                    for (int col = 0; col < k * k; ++col) {
                         Mk[row][col + b * step + a * k * n] = tmp[col];
                     }
                     row++;
@@ -275,8 +240,7 @@ int main()
     int number_execute = 9;
     int var_input[10] = {1, 10, 50, 100, 500, 1000, 2000, 3000, 4000, 4480};
     // int var_input[6] = {500, 1000, 2000, 3000, 4000, 4700};
-    while (number_execute < 10)
-    {
+    while (number_execute < 10) {
         number_of_input = var_input[number_execute];
         number_execute++;
 
@@ -326,8 +290,7 @@ int main()
 
         vector<vector<vector<int>>> three_result(3, vector<vector<int>>(M, vector<int>(M)));
 
-        for (int count = 0; count < number_of_channel; ++count)
-        {
+        for (int count = 0; count < number_of_channel; ++count) {
             write.write_string("\n******************** Channel: " + to_string(count) + " ****************\n");
             process_kernel(kernel1[count], c_out, c_in, k, n, Mk);
             process_input(input1, c_in, n, k, Mi);
@@ -343,22 +306,16 @@ int main()
 
             timer.start();
             vector<int> tmp;
-            for (int p = 0; p < res.size(); ++p)
-            {
-                for (int q = 0; q < batch_size; ++q)
-                {
+            for (int p = 0; p < res.size(); ++p) {
+                for (int q = 0; q < batch_size; ++q) {
                     tmp.push_back(res[p][q]);
                 }
             }
 
-            for (int index = 0; index < c_out * output_size * output_size; ++index)
-            {
-                for (int i = 0; i < c_out; ++i)
-                {
-                    for (int j = 0; j < output_size; ++j)
-                    {
-                        for (int p = 0; p < output_size; ++p)
-                        {
+            for (int index = 0; index < c_out * output_size * output_size; ++index) {
+                for (int i = 0; i < c_out; ++i) {
+                    for (int j = 0; j < output_size; ++j) {
+                        for (int p = 0; p < output_size; ++p) {
                             output[i][j][p] = tmp[index++];
                         }
                     }
@@ -391,10 +348,8 @@ int main()
             ofstream ofs2("/root/pvCNN/output2.txt");
             ofstream ofs3("/root/pvCNN/output3.txt");
 
-            for (int i = 0; i < M; ++i)
-            {
-                for (int j = 0; j < M; ++j)
-                {
+            for (int i = 0; i < M; ++i) {
+                for (int j = 0; j < M; ++j) {
                     A1[i * M + j] = Mk[i][j];
                     A2[i * M + j] = Mi[i][j];
                     A3[i * M + j] = res[i][j];
@@ -445,19 +400,16 @@ int main()
 
             log_debug("auxiliary A1 generate");
             timer.start();
-            for (int i = 0; i < cs.A1.size(); ++i)
-            {
+            for (int i = 0; i < cs.A1.size(); ++i) {
                 g_A_vec[i] = cs.A1[i] * crs.g;
             }
 
-            for (int i = 0; i < cs.A2.size(); ++i)
-            {
+            for (int i = 0; i < cs.A2.size(); ++i) {
                 g_B_vec[i] = cs.A2[i] * crs.h;
             }
             log_debug("auxiliary A2 generate");
 
-            for (int i = 0; i < cs.A3.size(); ++i)
-            {
+            for (int i = 0; i < cs.A3.size(); ++i) {
                 g_C_vec[i] = cs.A3[i] * crs.g;
             }
             log_debug("auxiliary A3 generate");
@@ -494,10 +446,8 @@ int main()
         }
 
         timer.start();
-        for (int i = 0; i < M; ++i)
-        {
-            for (int j = 0; j < M; ++j)
-            {
+        for (int i = 0; i < M; ++i) {
+            for (int j = 0; j < M; ++j) {
                 three_result[0][i][j] = three_result[0][i][j] + three_result[1][i][j] + three_result[2][i][j];
             }
         }

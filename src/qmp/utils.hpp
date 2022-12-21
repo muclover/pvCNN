@@ -25,7 +25,6 @@ std::string SHA256(std::string data);
 
 void SHA256_Bytes(std::string data, unsigned char *output);
 
-// 产生 l-r 的随机数
 template <typename FieldT>
 void random_generator(std::vector<FieldT> &a, int n)
 {
