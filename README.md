@@ -15,3 +15,4 @@ There are much redundancy, may be later update/reconstruct.
 - or `mkdir build && cd build && cmake .. && make`
 
 FHE based opensource project:
+- https://github.com/barlettacarmen/CrCNN
