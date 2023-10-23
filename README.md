@@ -1,6 +1,6 @@
 # Exp
-This is experiment.
-There are much redundancy, may be later update/reconstruct.
+The repository provides an implementation and evalution for the published paper:
+Weng, Jiasi, Jian Weng, Gui Tang, Anjia Yang, Ming Li, and Jia-Nan Liu. "pvcnn: Privacy-preserving and verifiable convolutional neural network testing." IEEE Transactions on Information Forensics and Security 18 (2023): 2218-2233.
 
 ## Requirements
 - `libsnark` environment: can refer to `libsnark` to install
