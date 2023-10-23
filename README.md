@@ -18,6 +18,6 @@ FHE based opensource project:
 - https://github.com/barlettacarmen/CrCNN
 
 ## Statement
-Project Name: pvCNN
-Authors:  Gui Tang, Jiasi Weng
-Affiliation: College of Cyber Security, Jinan University
+- Project Name: pvCNN
+- Authors:  Gui Tang, Jiasi Weng
+- Affiliation: College of Cyber Security, Jinan University
